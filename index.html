@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retail Sales and Inventory Forecaster</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-title-block">
+        <h1>Retail Sales and Inventory Forecaster</h1>
+        <div class="header-subtitle">
+          Machine Learning Demand Prediction Tool | 342IT Data Analytics & Data Science
+        </div>
+      </div>
+      <div class="header-meta">
+        <div>Student: <strong>Kalp Shah</strong> (ID: 24IT447)</div>
+        <div>Subject Teacher: <strong>Prof. Disha D Panchal</strong></div>
+        <div>Birla Vishvakarma Mahavidyalaya</div>
+      </div>
+    </header>
+
+    <!-- Main Forecaster Grid -->
+    <main class="forecaster-grid">
+      <!-- Input Parameters Column -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Input Parameters</h2>
+          <div class="presets-bar">
+            <button type="button" class="btn-preset" id="preset-avg">Average Day</button>
+            <button type="button" class="btn-preset" id="preset-promo">Promotion Day</button>
+            <button type="button" class="btn-preset" id="preset-lowstock">Low Stock</button>
+            <button type="button" class="btn-preset" id="preset-reset">Reset</button>
+          </div>
+        </div>
+
+        <form id="forecaster-form">
+          <div class="form-grid">
+            <!-- Model Selection -->
+            <div class="form-group full-width">
+              <label for="model-select">Prediction Model</label>
+              <select id="model-select">
+                <option value="rf" selected>Random Forest Regressor (R² = 0.994, RMSE = 8.539)</option>
+                <option value="lr">Linear Regression (R² = 0.994, RMSE = 8.605)</option>
+                <option value="dt">Decision Tree Regressor (R² = 0.988, RMSE = 11.780)</option>
+              </select>
+            </div>
+
+            <!-- Demand Forecast -->
+            <div class="form-group full-width">
+              <div class="label-row">
+                <label for="demand-forecast-input">Demand Forecast (Projected Units)</label>
+                <span class="value-badge" id="demand-badge">150 units</span>
+              </div>
+              <input type="number" id="demand-forecast-input" min="10" max="500" value="150" step="1">
+              <input type="range" id="demand-forecast-range" min="10" max="500" value="150" step="1">
+            </div>
+
+            <!-- Current Inventory Level -->
+            <div class="form-group">
+              <div class="label-row">
+                <label for="inventory-input">Inventory Level</label>
+                <span class="value-badge" id="inventory-badge">250 units</span>
+              </div>
+              <input type="number" id="inventory-input" min="10" max="500" value="250" step="1">
+              <input type="range" id="inventory-range" min="10" max="500" value="250" step="1">
+            </div>
+
+            <!-- Units Ordered -->
+            <div class="form-group">
+              <div class="label-row">
+                <label for="ordered-input">Units Ordered (Restock)</label>
+                <span class="value-badge" id="ordered-badge">100 units</span>
+              </div>
+              <input type="number" id="ordered-input" min="0" max="250" value="100" step="1">
+              <input type="range" id="ordered-range" min="0" max="250" value="100" step="1">
+            </div>
+
+            <!-- Unit Price -->
+            <div class="form-group">
+              <label for="price-input">Unit Price (INR)</label>
+              <input type="number" id="price-input" min="10" max="1000" value="149" step="1">
+            </div>
+
+            <!-- Promotional Discount -->
+            <div class="form-group">
+              <label for="discount-select">Promotional Discount</label>
+              <select id="discount-select">
+                <option value="0">0% (Regular Price)</option>
+                <option value="5">5% Discount</option>
+                <option value="10" selected>10% Discount</option>
+                <option value="15">15% Discount</option>
+                <option value="20">20% Discount</option>
+              </select>
+            </div>
+
+            <!-- Store ID -->
+            <div class="form-group">
+              <label for="store-select">Store ID</label>
+              <select id="store-select">
+                <option value="S001" selected>Store S001</option>
+                <option value="S002">Store S002</option>
+                <option value="S003">Store S003</option>
+                <option value="S004">Store S004</option>
+                <option value="S005">Store S005</option>
+              </select>
+            </div>
+
+            <!-- Category -->
+            <div class="form-group">
+              <label for="category-select">Product Category</label>
+              <select id="category-select">
+                <option value="Groceries" selected>Groceries</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Toys">Toys</option>
+                <option value="Furniture">Furniture</option>
+                <option value="Clothing">Clothing</option>
+              </select>
+            </div>
+
+            <!-- Region -->
+            <div class="form-group">
+              <label for="region-select">Region</label>
+              <select id="region-select">
+                <option value="North" selected>North</option>
+                <option value="South">South</option>
+                <option value="East">East</option>
+                <option value="West">West</option>
+              </select>
+            </div>
+
+            <!-- Weather -->
+            <div class="form-group">
+              <label for="weather-select">Weather Condition</label>
+              <select id="weather-select">
+                <option value="Sunny" selected>Sunny</option>
+                <option value="Rainy">Rainy</option>
+                <option value="Cloudy">Cloudy</option>
+                <option value="Snowy">Snowy</option>
+              </select>
+            </div>
+
+            <!-- Holiday / Promotion Flag -->
+            <div class="form-group full-width">
+              <label for="promo-select">Holiday or Promotional Event</label>
+              <select id="promo-select">
+                <option value="0">No (Standard Working Day)</option>
+                <option value="1" selected>Yes (Active Holiday or Major Promotion)</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <!-- Forecast Results Column -->
+      <div>
+        <!-- Primary Result Card -->
+        <section class="card">
+          <div class="card-header">
+            <h2>Forecast Results</h2>
+            <span id="selected-model-tag" style="font-size: 12px; color: var(--text-muted);">Model: Random Forest</span>
+          </div>
+
+          <div class="result-box">
+            <div class="result-label">Predicted Daily Sales</div>
+            <div class="result-number" id="predicted-units-output">148</div>
+            <div class="result-subtext">Units Sold</div>
+          </div>
+
+          <!-- Stock Health Alert -->
+          <div class="status-card optimal" id="status-card">
+            Optimal Stock Level (Safe Buffer Maintained)
+          </div>
+
+          <!-- Secondary Metrics Grid -->
+          <div class="metrics-grid">
+            <div class="metric-item">
+              <div class="metric-title">Expected Revenue</div>
+              <div class="metric-val" id="metric-revenue">INR 20,010</div>
+            </div>
+
+            <div class="metric-item">
+              <div class="metric-title">Remaining Stock</div>
+              <div class="metric-val" id="metric-remaining">102 units</div>
+            </div>
+
+            <div class="metric-item">
+              <div class="metric-title">Recommended Reorder</div>
+              <div class="metric-val" id="metric-reorder">50 units</div>
+            </div>
+
+            <div class="metric-item">
+              <div class="metric-title">Stock Turnover</div>
+              <div class="metric-val" id="metric-turnover">59.2%</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Multi-Model Comparison -->
+        <section class="card">
+          <div class="card-header">
+            <h2>Model Comparison for Current Inputs</h2>
+          </div>
+          <table class="model-comparison-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Predicted</th>
+                <th>MAE</th>
+                <th>R²</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr id="row-rf" class="active-row">
+                <td>Random Forest</td>
+                <td id="pred-rf">148 units</td>
+                <td>7.249</td>
+                <td>0.994</td>
+              </tr>
+              <tr id="row-lr">
+                <td>Linear Regression</td>
+                <td id="pred-lr">149 units</td>
+                <td>7.422</td>
+                <td>0.994</td>
+              </tr>
+              <tr id="row-dt">
+                <td>Decision Tree</td>
+                <td id="pred-dt">150 units</td>
+                <td>9.471</td>
+                <td>0.988</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </main>
+
+    <!-- Simple Clean Footer -->
+    <footer class="footer-simple">
+      Intelligent Retail Sales and Inventory Forecasting | Data Science Mini Project | Student: Kalp Shah (24IT447)
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
